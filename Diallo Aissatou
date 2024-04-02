@@ -1,0 +1,52 @@
+CREATE DATABASE gomycode 
+CREATE TABLE clients (
+    customer_id INTEGER PRIMARY KEY NOT NULL,
+    nom VARCHAR(255) NOT NULL,
+    adresse VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE produits (
+    product_id INTEGER PRIMARY KEY NOT NULL,
+    nom VARCHAR(255) NOT NULL,
+    prix DECIMAL CHECK (prix > 0) 
+);
+
+CREATE TABLE commandes (
+    order_id INTEGER PRIMARY KEY NOT NULL,
+    customer_id INTEGER NOT NULL,
+    product_id INTEGER NOT NULL,
+    quantite INTEGER NOT NULL,
+    order_date DATE NOT NULL,
+    FOREIGN KEY (customer_id) REFERENCES clients(customer_id),
+    FOREIGN KEY (product_id) REFERENCES produits(product_id)
+);
+--------------------------------------------------------------------------------------------
+1-- Insérer l'enregistrement 1
+INSERT INTO produits (product_id, nom, prix) VALUES (1, 'Cookies', 10);
+
+-- Insérer l'enregistrement 2
+INSERT INTO produits (product_id, nom, prix) VALUES (2, 'Candy', 5.2);
+
+
+2- Insérer l'enregistrement 1
+INSERT INTO clients (customer_id, nom, adresse) VALUES (1, 'Ahmed', 'Tunisia');
+
+-- Insérer l'enregistrement 2
+INSERT INTO clients (customer_id, nom, adresse) VALUES (2, 'Coulibaly', 'Sénégal');
+
+-- Insérer l'enregistrement 3
+INSERT INTO clients (customer_id, nom, adresse) VALUES (3, 'Hasan', 'Egypt');
+
+3-- Insérer l'enregistrement 1
+INSERT INTO commandes (customer_id, product_id, quantite, order_date) 
+VALUES (1, 2, 3, '2023-01-22');
+
+-- Insérer l'enregistrement 2
+INSERT INTO commandes (customer_id, product_id, quantite, order_date) 
+VALUES (2, 1, 10, '2023-04-14');
+
+_______________________________________________________
+2-1 UPDATE commandes
+SET quantite = 6
+WHERE order_id = 2;
+
