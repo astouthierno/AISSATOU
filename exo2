@@ -1,1 +1,39 @@
+CREATE DATABASE; 
+
+USE TABLE;
+
+CREATE TABLE CUSTOMER 
+(
+    customer_id INT PRIMARY KEY,
+    customer_name VARCHAR (100),
+    customer_tel VARCHAR (50)
+);
+
+
+CREATE TABLE PRODUCT 
+(
+    
+    product_id INT PRIMARY KEY, 
+    product_name VARCHAR (70),
+    category VARCHAR (80),
+    price DECIMAL (5)
+);
+
+
+CREATE TABLE ORDERS 
+(
+    customer_id INT,
+    product_id INT,
+    order_date DATE,
+    quantity INT,
+    total_amount DECIMAL (5),
+    FOREIGN KEY (customer_id) REFERENCES CUSTOMER (customer_id),
+    FOREIGN KEY (product_id) REFERENCES PRODUCT (product_id)
+);    
+    
+ALTER TABLE ORDERS ADD orders_id INT PRIMARY KEY;
+
+INSERT INTO CUSTOMER (customer_id,customer_name,customer_tel)
+     VALUES (1,'ASSATA','+221770000000'),(2,'MODOU','+221770000001'),(3,'ASSANE','+221770000002');
+
 
