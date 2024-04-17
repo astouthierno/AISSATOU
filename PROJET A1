@@ -1,1 +1,116 @@
+1-Convertissez le diagramme entité-relation donné en un modèle relationnel.
+    Producer(id_Producer,first_name ,last_name)
+    Wine(id_Wine,Categorie,Year,Degree)
+    Harvest(id_Harvest,#id_producer,#id_Winer)
+
+2- Implémentez le modèle relationnel à l’aide de SQL.
+  CREATE TABLE WINE (
+    WINE_id INT PRIMARY KEY ,
+    Categorie VARCHAR(150)NOT NULL,
+     Year DATE NOT NULL,
+     Degree INT NOT NULL
+    );
+      
+CREATE TABLE Producer (
+    Producer_id INT PRIMARY KEY ,
+    First_name VARCHAR(100)NOT NULL,
+    Last_name VARCHAR (70),
+    Region VARCHAR (80)
+    );
+       
+CREATE TABLE Harvest (
+  Harvrest_id INT PRIMARY KEY,
+quantity VARCHAR(150) NOT NULL,
+   WINE_id INT NOT NULL,
+   producer_id INT NOT NULL,
+   CONSTRAINT FOREIGN KEY(WINE_id) REFERENCES wine (WINE_id), 
+   CONSTRAINT FOREIGN KEY(Producer_id) REFERENCES producer (Producer_id)
+);
+
+3-Insérez des données dans les tables de la base de données.
+Inserons les données dans les tables
+Create table WINE
+INSERT INTO Wine (WINE_id,Categorie, Year, Degree)
+VALUES (11,'Red', 2017, 13.8),
+       (12,'White', 2019, 12.3),
+       (13,'Rosé', 2020, 11.5);
+
+
+
+Create table Producer
+INSERT INTO producer(Producer_id, First_name, Last_name, Region) VALUES 
+(11,'Diallo','Mariame','Saly'),(12,'Bah','Aissatou','Sousse'), (13,'Sow','Hawa','Sousse');
+
+Create table Harvest
+INSERT INTO harvest (Harvrest_id,quantity,WINE_id,producer_id)
+VALUES (15,300,12,11), (16,400,12,12), (18,600,13,13);
+
+4--Donnez la liste des producteurs
+Liste des Producteurs
+SELECT* FROM Producer;
+5--Donnez la liste des producteurs triés par nom.
+Liste des producteurs triée par nom
+SELECT *
+FROM Producer
+ORDER BY last_name, first_name;
+
+
+6--Donnez la liste des producteurs de Sousse.
+La liste des producteurs de Sousse
+SELECT ALL First_name,Last_name 
+FROM Producer 
+WHERE Region LIKE 'SOUSSE';
+
+7--Calculer la quantité totale de vin produite en portant le nombre 12.
+Quantité totale de vin produit portant le num 12
+
+
+SELECT SUM(Wine.Quantity) AS TotalWineProduced
+FROM Harvest
+JOIN Wine ON Harvest.id_Wine = Wine.id_Wine
+JOIN Producer ON Harvest.id_Producer = Producer.id_Producer
+WHERE Producer.id_Producer = 12;
+
+
+8-Calculer la quantité de vin produite par catégorie.
+La quantité de vin produite par catégorie.
+SELECT  * Quantity 
+FROM harvest INNER JOIN WINE ON Categorie;
+SELECT * Categorie 
+FROM WINE INNER JOIN Harvest ON Quantity;
+
+INSERT INTO `wine`(`WINE_id`, `Categorie`, `Year`, `Degree`) VALUES ('15','VinRouge',1890,90);
+INSERT INTO `wine`(`WINE_id`, `Categorie`, `Year`, `Degree`) VALUES ('17','Champagne',2002,50);
+
+SELECT Wine.Categorie, SUM(Wine.Quantity) AS TotalWineProduced
+FROM Harvest
+JOIN Wine ON Harvest.id_Wine = Wine.id_Wine
+GROUP BY Wine.Categorie;
+
+
+
+
+
+Quels producteurs de la région de Sousse ont récolté au moins un vin en quantité supérieure à 300 litres ?
+Nous voulons que les noms et prénoms des producteurs, classés par ordre alphabétique.
+
+
+
+SELECT first_name, last_name
+FROM Producer
+WHERE id_Producer IN (
+    SELECT DISTINCT Harvest.id_Producer
+    FROM Harvest
+    JOIN Wine ON Harvest.id_Wine = Wine.id_Wine
+    WHERE Harvest.Quantity > 300
+)
+AND Region = 'Sousse'
+ORDER BY last_name, first_name;
+
+10-Énumérez les numéros de vin qui ont un degré supérieur à 12 et qui ont été produits par le producteur numéro 24.
+SELECT Wine.id_Wine
+FROM Harvest
+JOIN Wine ON Harvest.id_Wine = Wine.id_Wine
+WHERE Harvest.id_Producer = 24
+AND Wine.Degree > 12;
 
