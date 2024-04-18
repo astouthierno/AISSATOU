@@ -8,18 +8,13 @@ CREATE TABLE CUSTOMER
     customer_name VARCHAR (100),
     customer_tel VARCHAR (50)
 );
-
-
 CREATE TABLE PRODUCT 
 (
-    
-    product_id INT PRIMARY KEY, 
+  product_id INT PRIMARY KEY, 
     product_name VARCHAR (70),
     category VARCHAR (80),
     price DECIMAL (5)
 );
-
-
 CREATE TABLE ORDERS 
 (
     customer_id INT,
@@ -35,5 +30,163 @@ ALTER TABLE ORDERS ADD orders_id INT PRIMARY KEY;
 
 INSERT INTO CUSTOMER (customer_id,customer_name,customer_tel)
      VALUES (1,'ASSATA','+221770000000'),(2,'MODOU','+221770000001'),(3,'ASSANE','+221770000002');
+
+INSERT INTO ORDERS(customer_id,product_id,order_date,quantity,orders_id)
+VALUES (1,7,'02-04-2021',4,7),(2,4,'01-08-2024',5,8),(3,9,'06-08-2024',8,9),(6,5,'05-08-2020',9,10);
+
+SELECT* FROM product;
+INSERT INTO ORDERS(customer_id,product_id,order_date,quantity,total_amount,orders_id)
+VALUES (1,4,'2021-04-02',4,200,100),(2,6,'2024-08-01',5,540,101),(3,7,'2024-08-04',8,320,102);
+
+INSERT INTO Product(product_id,product_name,category,price)
+VALUES (7,'huile','widget',40),(4,'pommande','gadget',50),(9,'mangue','widget',80),(6,'sac','gadget',90);
+
+3---Écrivez une requête SQL pour récupérer les noms des clients qui ont passé une commande pour au moins un widget et au moins un gadget, ainsi que le coût total des widgets et gadgets commandés par chaque client. 
+Le coût de chaque article doit être calculé en multipliant la quantité par le prix du produit.
+
+SELECT 
+    customer.customer_name,
+    SUM(CASE WHEN product.category = 'widget' THEN orders.quantity * product.price ELSE 0 END) AS total_widget_cost,
+    SUM(CASE WHEN product.category = 'gadget' THEN orders.quantity * product.price ELSE 0 END) AS total_gadget_cost
+FROM 
+    CUSTOMER 
+INNER JOIN 
+    ORDERS orders ON customer.customer_id = orders.customer_id
+INNER JOIN 
+    PRODUCT product ON orders.product_id = product.product_id
+WHERE 
+    product.category IN ('widget', 'gadget')
+GROUP BY 
+    customer.customer_id, customer.customer_name
+HAVING 
+    SUM(CASE WHEN product.category = 'widget' THEN 1 ELSE 0 END) >= 1
+    AND SUM(CASE WHEN product.category = 'gadget' THEN 1 ELSE 0 END) >= 1;
+
+4--Écrivez une requête pour récupérer les noms des clients qui ont passé une commande pour au moins un widget, ainsi que le coût total des widgets commandés par chaque client.
+
+SELECT 
+    customer.customer_name,
+    SUM(orders.quantity * product.price) AS total_widget_cost
+FROM 
+    CUSTOMER 
+INNER JOIN 
+    ORDERS orders ON customer.customer_id = orders.customer_id
+INNER JOIN 
+    PRODUCT product ON orders.product_id = product.product_id
+WHERE 
+    product.category = 'widget'
+GROUP BY 
+    customer.customer_id, customer.customer_name
+HAVING 
+    SUM(orders.quantity) > 0;
+
+5--Rédigez une requête pour récupérer les noms des clients qui ont passé une commande pour au moins un gadget,
+ainsi que le coût total des gadgets commandés par chaque client.
+ SELECT 
+    customer.customer_name,
+    SUM(orders.quantity * product.price) AS total_gadget_cost
+FROM 
+    CUSTOMER 
+INNER JOIN 
+    ORDERS orders ON customer.customer_id = orders.customer_id
+INNER JOIN 
+    PRODUCT product ON orders.product_id = product.product_id
+WHERE 
+    product.category = 'gadget'
+GROUP BY 
+    customer.customer_id, customer.customer_name
+HAVING 
+    SUM(orders.quantity) > 0;
+
+6---Rédigez une requête pour récupérer les noms des clients qui ont passé une commande pour au moins un doohickey, 
+ainsi que le coût total des doohickeys commandés par chaque client.
+
+SELECT 
+    customer.customer_name,
+    SUM(orders.quantity * product.price) AS total_doohickey_cost
+FROM 
+    CUSTOMER 
+INNER JOIN 
+    ORDERS orders ON customer.customer_id = orders.customer_id
+INNER JOIN 
+    PRODUCT product ON orders.product_id = product.product_id
+WHERE 
+    product.category = 'doohickey'
+GROUP BY 
+    customer.customer_id, customer.customer_name
+HAVING 
+    SUM(orders.quantity) > 0;
+7--Écrivez une requête pour récupérer le nombre total de widgets et de gadgets commandés par chaque client, ainsi que le coût total des commandes.
+
+SELECT 
+    customer.customer_name,
+    SUM(CASE WHEN product.category = 'widget' THEN quantity ELSE 0 END) AS total_widgets_ordered,
+    SUM(CASE WHEN product.category = 'gadget' THEN quantity ELSE 0 END) AS total_gadgets_ordered,
+    SUM(quantity * product.price) AS total_order_cost
+FROM 
+    CUSTOMER 
+INNER JOIN 
+    ORDERS orders ON customer.customer_id = orders.customer_id
+INNER JOIN 
+    PRODUCT product ON orders.product_id = product.product_id
+GROUP BY 
+    customer.customer_name;
+
+8---Écrivez une requête pour récupérer les noms des produits qui ont été commandés par au moins un client,
+ainsi que la quantité totale de chaque produit commandé.
+
+SELECT 
+    product.product_name,
+    SUM(orders.quantity) AS total_quantity_ordered
+FROM 
+    PRODUCT 
+INNER JOIN 
+    ORDERS orders ON product.product_id = orders.product_id
+GROUP BY 
+    product.product_name
+HAVING 
+    SUM(orders.quantity) > 0;
+9--Rédigez une requête pour récupérer les noms des clients qui ont passé le plus de commandes, ainsi que le nombre total de commandes passées par chaque client.
+SELECT 
+    customer.customer_name,
+    COUNT(*) AS total_orders
+FROM 
+    CUSTOMER 
+INNER JOIN 
+    ORDERS orders ON customer.customer_id = orders.customer_id
+GROUP BY 
+    customer.customer_id, customer.customer_name
+ORDER BY 
+    total_orders DESC
+LIMIT 1;
+10--Écrivez une requête pour récupérer les noms des produits qui ont été commandés le plus, ainsi que la quantité totale de chaque produit commandé.
+SELECT 
+    product.product_name,
+    SUM(orders.quantity) AS total_quantity_ordered
+FROM 
+    PRODUCT 
+INNER JOIN 
+    ORDERS orders ON product.product_id = orders.product_id
+GROUP BY 
+    product.product_id, product.product_name
+ORDER BY 
+    total_quantity_ordered DESC;
+11-Rédigez une requête pour récupérer les noms des clients qui ont passé une commande chaque jour de la semaine,
+ainsi que le nombre total de commandes passées par chaque client.
+SELECT 
+    customer.customer_name,
+    COUNT(*) AS total_orders
+FROM 
+    CUSTOMER 
+INNER JOIN 
+    ORDERS orders ON customer.customer_id = orders.customer_id
+GROUP BY 
+    customer.customer_id, customer.customer_name
+HAVING 
+    COUNT(DISTINCT DATE(orders.order_date)) = 7;
+
+
+
+
 
 
